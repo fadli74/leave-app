@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -179,15 +179,15 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>{isDarkMode ? 'Mode Terang' : 'Mode Gelap'}</span>
               </button>
 
-              <div className="bg-white/5 rounded-lg p-3 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-gray-300">
+              <div className={`bg-white/5 rounded-lg flex items-center gap-3 ${sidebarOpen ? 'p-3' : 'p-2 justify-center'}`}>
+                <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-gray-300 shrink-0">
                   {userRole === 'umum' ? <Users size={20} /> : <UserCog size={20} />}
                 </div>
-                <div>
-                  <div className="text-sm font-bold text-white">
+                <div className={`transition-opacity duration-300 ${sidebarOpen ? "opacity-100 block" : "opacity-0 hidden"}`}>
+                  <div className="text-sm font-bold text-white whitespace-nowrap">
                     {userRole === 'umum' ? 'Mode Umum' : 'Mode Atasan'}
                   </div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-400 whitespace-nowrap">
                     {userRole === 'umum' ? 'Akses Terbatas' : 'Akses Penuh'}
                   </div>
                 </div>
@@ -195,10 +195,11 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               {userRole === 'umum' ? (
                 <button 
                   onClick={() => setShowLoginModal(true)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#12523f] hover:bg-[#16644d] text-white py-2 rounded-md text-sm font-medium transition-colors"
+                  className={`w-full flex items-center justify-center gap-2 bg-[#12523f] hover:bg-[#16644d] text-white py-2 rounded-md text-sm font-medium transition-colors`}
+                  title="Login Atasan"
                 >
-                  <LogIn size={16} />
-                  Login Atasan
+                  <LogIn size={16} className="shrink-0" />
+                  <span className={`transition-opacity duration-300 whitespace-nowrap ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Login Atasan</span>
                 </button>
               ) : (
                 <button 
@@ -206,10 +207,11 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     setUserRole('umum');
                     setLoggedInName('');
                   }}
-                  className="w-full flex items-center justify-center gap-2 bg-red-900/30 hover:bg-red-900/50 text-red-300 hover:text-red-200 py-2 rounded-md text-sm font-medium transition-colors"
+                  className={`w-full flex items-center justify-center gap-2 bg-red-900/30 hover:bg-red-900/50 text-red-300 hover:text-red-200 py-2 rounded-md text-sm font-medium transition-colors`}
+                  title="Logout"
                 >
-                  <LogOut size={16} />
-                  Logout
+                  <LogOut size={16} className="shrink-0" />
+                  <span className={`transition-opacity duration-300 whitespace-nowrap ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Logout</span>
                 </button>
               )}
             </div>
