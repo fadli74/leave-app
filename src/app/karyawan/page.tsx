@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useState, useEffect } from "react";
 import {
   Search,
@@ -326,7 +326,7 @@ export default function DataKaryawan() {
     }),
   );
   return (
-    <div className="flex flex-col h-full space-y-4">
+    <div className="flex flex-col min-h-[800px] md:h-full space-y-4">
       {" "}
       {/* Modal Tambah Karyawan */}{" "}
       {isModalOpen && (
@@ -731,8 +731,7 @@ export default function DataKaryawan() {
         </div>{" "}
       </div>{" "}
       {/* Table Container */}{" "}
-      <div
-        className={`flex-1 overflow-hidden rounded-lg shadow-sm border flex flex-col ${isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white"}`}
+      <div className={`flex-1 min-h-[500px] overflow-hidden rounded-lg shadow-sm border flex flex-col ${isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white"}`}
       >
         {" "}
         <div className="overflow-auto flex-1 relative">
@@ -916,3 +915,4 @@ export default function DataKaryawan() {
     </div>
   );
 }
+

@@ -113,13 +113,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className={`flex h-full overflow-hidden transition-colors duration-200 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-800'}`}>
           
           {/* Sidebar */}
-          <aside className={`${sidebarOpen ? 'w-64' : 'w-0 -translate-x-full'} transition-all duration-300 ${isDarkMode ? 'bg-gray-950 border-r border-gray-800' : 'bg-[#0c392c]'} text-gray-300 flex flex-col fixed md:relative z-20 h-full overflow-hidden`}>
-            <div className="p-5 text-white font-bold text-xl border-b border-white/10 truncate flex justify-between items-center">
-              <span>CL - LEAVE APP</span>
-              <button onClick={() => setSidebarOpen(false)} className="md:hidden text-gray-300 hover:text-white">
-                ?
-              </button>
-            </div>
+          <aside className={`${sidebarOpen ? 'w-64' : 'w-[72px]'} transition-all duration-300 ${isDarkMode ? 'bg-gray-950 border-r border-gray-800' : 'bg-[#0c392c]'} text-gray-300 flex flex-col z-20 h-full overflow-hidden shrink-0`}>
+            <div className="p-5 text-white font-bold text-xl border-b border-white/10 truncate flex justify-between items-center h-[73px]">
+    <span className="truncate">{sidebarOpen ? 'CL - LEAVE APP' : 'CL'}</span>
+  </div>
             
             <div className="flex-1 overflow-y-auto py-4">
               <ul className="space-y-1 px-3">
@@ -127,7 +124,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 <li>
                   <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                     <LayoutDashboard size={20} />
-                    <span className="text-sm font-medium">Dashboard</span>
+                    <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Dashboard</span>
                   </Link>
                 </li>
               )}
@@ -135,21 +132,21 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               <li>
                 <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/form" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/form' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                   <FileText size={20} />
-                  <span className="text-sm font-medium">Form Pengajuan</span>
+                  <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Form Pengajuan</span>
                 </Link>
               </li>
 
               <li>
                 <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/status" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/status' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                   <Database size={20} />
-                  <span className="text-sm font-medium">Status Approval</span>
+                  <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Status Approval</span>
                 </Link>
               </li>
 
               <li>
                 <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/backup" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/backup' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                   <Users size={20} />
-                  <span className="text-sm font-medium">Backup Karyawan</span>
+                  <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Backup Karyawan</span>
                 </Link>
               </li>
 
@@ -158,13 +155,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   <li>
                     <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/approval" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/approval' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                       <CheckSquare size={20} />
-                      <span className="text-sm font-medium">Approval Atasan</span>
+                      <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Approval Atasan</span>
                     </Link>
                   </li>
                   <li>
                     <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/karyawan" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/karyawan' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                       <Users size={20} />
-                      <span className="text-sm font-medium">Daftar Karyawan</span>
+                      <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Daftar Karyawan</span>
                     </Link>
                   </li>
                 </>
@@ -179,7 +176,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 title={isDarkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'}
               >
                 {isDarkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} />}
-                <span className="text-sm font-medium">{isDarkMode ? 'Mode Terang' : 'Mode Gelap'}</span>
+                <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>{isDarkMode ? 'Mode Terang' : 'Mode Gelap'}</span>
               </button>
 
               <div className="bg-white/5 rounded-lg p-3 flex items-center gap-3">
