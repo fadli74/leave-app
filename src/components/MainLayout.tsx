@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -47,7 +47,12 @@ export function useAppContext() {
 }
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      setSidebarOpen(true);
+    }
+  }, []);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [userRole, setUserRole] = useState<Role>('umum');
   const [loggedInName, setLoggedInName] = useState('');
@@ -112,7 +117,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <div className="p-5 text-white font-bold text-xl border-b border-white/10 truncate flex justify-between items-center">
               <span>CL - LEAVE APP</span>
               <button onClick={() => setSidebarOpen(false)} className="md:hidden text-gray-300 hover:text-white">
-                ✕
+                ?
               </button>
             </div>
             
@@ -120,7 +125,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               <ul className="space-y-1 px-3">
               {userRole === 'atasan' && (
                 <li>
-                  <Link href="/" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                  <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                     <LayoutDashboard size={20} />
                     <span className="text-sm font-medium">Dashboard</span>
                   </Link>
@@ -128,21 +133,21 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               )}
               
               <li>
-                <Link href="/form" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/form' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/form" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/form' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                   <FileText size={20} />
                   <span className="text-sm font-medium">Form Pengajuan</span>
                 </Link>
               </li>
 
               <li>
-                <Link href="/status" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/status' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/status" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/status' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                   <Database size={20} />
                   <span className="text-sm font-medium">Status Approval</span>
                 </Link>
               </li>
 
               <li>
-                <Link href="/backup" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/backup' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/backup" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/backup' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                   <Users size={20} />
                   <span className="text-sm font-medium">Backup Karyawan</span>
                 </Link>
@@ -151,13 +156,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               {userRole === 'atasan' && (
                 <>
                   <li>
-                    <Link href="/approval" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/approval' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                    <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/approval" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/approval' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                       <CheckSquare size={20} />
                       <span className="text-sm font-medium">Approval Atasan</span>
                     </Link>
                   </li>
                   <li>
-                    <Link href="/karyawan" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/karyawan' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                    <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/karyawan" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/karyawan' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                       <Users size={20} />
                       <span className="text-sm font-medium">Daftar Karyawan</span>
                     </Link>
@@ -342,3 +347,4 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     </AppContext.Provider>
   );
 }
+

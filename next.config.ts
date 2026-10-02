@@ -2,8 +2,7 @@
 
 const nextConfig: NextConfig = {
   output: 'export',
-  // if hosting on github pages without custom domain, they might need basePath.
-  // but if they just upload the files, let's keep it simple.
+  basePath: process.env.GITHUB_ACTIONS ? '/leave-app' : '',
   images: {
     unoptimized: true,
   }
