@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -344,4 +344,5 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     </AppContext.Provider>
   );
 }
+
 

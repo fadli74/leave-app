@@ -2,7 +2,7 @@
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: process.env.GITHUB_ACTIONS ? '/leave-app' : '',
+  basePath: '/leave-app',
   images: {
     unoptimized: true,
   }
