@@ -169,7 +169,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             </ul>
             </div>
 
-            <div className="p-4 border-t border-white/10 space-y-3">
+            <div className="p-4 pb-8 border-t border-white/10 space-y-4">
               <button 
                 onClick={() => setIsDarkMode(!isDarkMode)} 
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-white/5 text-gray-300 hover:text-white"
