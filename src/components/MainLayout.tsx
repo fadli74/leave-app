@@ -114,9 +114,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           
           {/* Sidebar */}
           <aside className={`${sidebarOpen ? 'w-64' : 'w-[72px]'} transition-all duration-300 ${isDarkMode ? 'bg-gray-950 border-r border-gray-800' : 'bg-[#0c392c]'} text-gray-300 flex flex-col z-20 h-full overflow-hidden shrink-0`}>
-            <div className="p-5 text-white font-bold text-xl border-b border-white/10 truncate flex justify-between items-center h-[73px]">
-    <span className="truncate">{sidebarOpen ? 'Form Cuti & Sakit' : 'Form'}</span>
-  </div>
+            <div className={`py-5 text-white font-bold text-xl border-b border-white/10 flex items-center h-[73px] ${sidebarOpen ? 'px-5 justify-between' : 'justify-center'}`}>
+    <span className={sidebarOpen ? "truncate" : "text-sm"}>{sidebarOpen ? 'Form Cuti & Sakit' : 'Form'}</span>
+    </div>
             
             <div className="flex-1 overflow-y-auto py-4">
               <ul className="space-y-1 px-3">
