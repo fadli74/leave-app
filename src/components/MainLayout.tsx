@@ -130,7 +130,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               )}
               
               <li>
-                <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/form" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/form' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/form-cuti-sakit" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/form-cuti-sakit' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                   <FileText size={20} />
                   <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Form Pengajuan</span>
                 </Link>

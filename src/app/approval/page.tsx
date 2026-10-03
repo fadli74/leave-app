@@ -11,7 +11,7 @@ export default function ApprovalPage() {
   const router = useRouter();
   useEffect(() => {
     if (userRole !== 'atasan') {
-      router.push('/form');
+      router.push('/form-cuti-sakit');
     }
   }, [userRole, router]);
   const [requests, setRequests] = useState<any[]>([]);

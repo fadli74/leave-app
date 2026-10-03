@@ -170,7 +170,7 @@ export default function Dashboard() {
         <FileText size={64} className="mb-4 text-emerald-500 opacity-50" />
         <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Mode Akses Terbatas</h2>
         <p className="max-w-md mb-6">Anda sedang dalam mode umum. Silakan ke halaman form untuk mengajukan cuti, atau Login sebagai Atasan untuk melihat statistik dashboard.</p>
-        <Link href="/form" className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md font-medium transition-colors">
+        <Link href="/form-cuti-sakit" className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md font-medium transition-colors">
           Buka Form Pengajuan Cuti
         </Link>
       </div>

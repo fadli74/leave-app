@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useState, useEffect } from "react";
 import {
   Search,
@@ -32,7 +32,7 @@ export default function DataKaryawan() {
   const router = useRouter();
   useEffect(() => {
     if (userRole !== "atasan") {
-      router.push("/form");
+      router.push("/form-cuti-sakit");
     }
   }, [userRole, router]);
   const [searchTerm, setSearchTerm] = useState("");
