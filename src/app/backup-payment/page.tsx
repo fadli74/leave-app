@@ -22,30 +22,72 @@ export default function BackupPaymentForm() {
   const [fotoMasukName, setFotoMasukName] = useState('');
   const [fotoPulangName, setFotoPulangName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  interface EmployeeData {
+    cabang: string;
+    empId: string;
+    name: string;
+    job: string;
+  }
+  const [allEmployees, setAllEmployees] = useState<EmployeeData[]>([]);
   const [branches, setBranches] = useState<string[]>([]);
-  const [isLoadingBranches, setIsLoadingBranches] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   useEffect(() => {
-    const fetchBranches = async () => {
+    const fetchData = async () => {
       try {
         const res = await fetch('https://docs.google.com/spreadsheets/d/1UyaqSC7BxG9wIEyVTHMnZU6dB---juCogG2pzAQL7XE/export?format=csv&gid=547191360');
         const csv = await res.text();
         const lines = csv.split('\n');
+        
         const uniqueBranches = new Set<string>();
+        const employees: EmployeeData[] = [];
+        
         for (let i = 1; i < lines.length; i++) {
           if (!lines[i].trim()) continue;
-          const branch = lines[i].split(',')[0].trim().replace(/^"|"$/g, '');
-          if (branch) uniqueBranches.add(branch);
+          
+          let currentline = [];
+          let inQuotes = false;
+          let val = '';
+          for (let j = 0; j < lines[i].length; j++) {
+            let char = lines[i][j];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              currentline.push(val.trim());
+              val = '';
+            } else {
+              val += char;
+            }
+          }
+          currentline.push(val.trim());
+          
+          if (currentline.length >= 6) {
+            const cabang = currentline[0].replace(/^"|"$/g, '');
+            const empId = currentline[2].replace(/^"|"$/g, '');
+            const name = currentline[3].replace(/^"|"$/g, '');
+            const job = currentline[5].replace(/^"|"$/g, '');
+            
+            if (cabang) {
+              uniqueBranches.add(cabang);
+              employees.push({ cabang, empId, name, job });
+            }
+          }
         }
         setBranches(Array.from(uniqueBranches).sort());
+        setAllEmployees(employees);
       } catch (err) {
-        console.error("Failed to load branches:", err);
+        console.error("Failed to load data:", err);
       } finally {
-        setIsLoadingBranches(false);
+        setIsLoadingData(false);
       }
     };
-    fetchBranches();
+    fetchData();
   }, []);
+
+  // Filter employees based on selected branch
+  const filteredEmployees = allEmployees.filter(emp => emp.cabang === formData.cabangDitempatkan).sort((a, b) => a.name.localeCompare(b.name));
+
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -74,7 +116,32 @@ export default function BackupPaymentForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (name === 'cabangDitempatkan') {
+      // If branch changes, reset employee selection
+      setFormData(prev => ({ 
+        ...prev, 
+        cabangDitempatkan: value,
+        namaKaryawan: '',
+        employeeId: '',
+        job: ''
+      }));
+    } else if (name === 'namaKaryawan') {
+      // If employee changes, auto-fill empId and job
+      const selectedEmp = filteredEmployees.find(emp => emp.name === value);
+      if (selectedEmp) {
+        setFormData(prev => ({
+          ...prev,
+          namaKaryawan: selectedEmp.name,
+          employeeId: selectedEmp.empId,
+          job: selectedEmp.job
+        }));
+      } else {
+        setFormData(prev => ({ ...prev, namaKaryawan: value, employeeId: '', job: '' }));
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -131,7 +198,7 @@ export default function BackupPaymentForm() {
           <div>
             <label htmlFor="cabangDitempatkan" className={labelClass}>
               Cabang Ditempatkan
-              {isLoadingBranches && <span className="text-blue-500 text-xs ml-2">(Memuat...)</span>}
+              {isLoadingData && <span className="text-blue-500 text-xs ml-2">(Memuat data...)</span>}
             </label>
             <select 
               name="cabangDitempatkan" 
@@ -152,15 +219,28 @@ export default function BackupPaymentForm() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label htmlFor="namaKaryawan" className={labelClass}>Nama Karyawan (Yang Digantikan)</label>
-            <input type="text" name="namaKaryawan" id="namaKaryawan" required value={formData.namaKaryawan} onChange={handleChange} className={inputClass} placeholder="Nama karyawan utama" />
+            <select 
+              name="namaKaryawan" 
+              id="namaKaryawan" 
+              required 
+              disabled={!formData.cabangDitempatkan || isLoadingData}
+              value={formData.namaKaryawan} 
+              onChange={handleChange} 
+              className={inputClass}
+            >
+              <option value="">{formData.cabangDitempatkan ? 'Pilih Karyawan...' : 'Pilih cabang dulu...'}</option>
+              {filteredEmployees.map((emp, idx) => (
+                <option key={idx} value={emp.name}>{emp.name}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label htmlFor="employeeId" className={labelClass}>Employee ID</label>
-            <input type="text" name="employeeId" id="employeeId" required value={formData.employeeId} onChange={handleChange} className={inputClass} placeholder="ID Karyawan" />
+            <input type="text" name="employeeId" id="employeeId" required readOnly value={formData.employeeId} className={`${inputClass} bg-gray-50 text-gray-500 cursor-not-allowed`} placeholder="Terisi otomatis..." />
           </div>
           <div>
             <label htmlFor="job" className={labelClass}>Job</label>
-            <input type="text" name="job" id="job" required value={formData.job} onChange={handleChange} className={inputClass} placeholder="Posisi/Jabatan" />
+            <input type="text" name="job" id="job" required readOnly value={formData.job} className={`${inputClass} bg-gray-50 text-gray-500 cursor-not-allowed`} placeholder="Terisi otomatis..." />
           </div>
         </div>
 
