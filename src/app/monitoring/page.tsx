@@ -115,7 +115,8 @@ export default function MonitoringPage() {
                 <th className="px-6 py-4 font-bold">TGL MULAI</th>
                 <th className="px-6 py-4 font-bold">TGL SELESAI</th>
                 <th className="px-6 py-4 font-bold">KETERANGAN HARI</th>
-                <th className="px-6 py-4 font-bold">BACKUP & TELP</th>
+                <th className="px-6 py-4 font-bold">NAMA BACKUP</th>
+                <th className="px-6 py-4 font-bold">NO TLP</th>
               </tr>
             </thead>
             <tbody>
@@ -140,15 +141,17 @@ export default function MonitoringPage() {
                     <td className="px-6 py-4 font-bold uppercase tracking-wider">
                       {req._monitorType === 'today' ? 'Hari Ini' : (req._monitorType === 'tomorrow' ? 'Besok (H+1)' : 'Lusa (H+2)')}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="font-semibold">{req['Nama Backup'] || '-'}</div>
-                      <div className="text-xs opacity-80">{req['No Telp'] || '-'}</div>
+                    <td className="px-6 py-4 font-semibold whitespace-nowrap">
+                      {req['Nama Backup'] || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {req['No Telp'] || '-'}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className={`px-6 py-12 text-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                  <td colSpan={8} className={`px-6 py-12 text-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                     <CalendarDays className="mx-auto h-12 w-12 opacity-20 mb-3" />
                     <p>Tidak ada karyawan yang cuti/sakit pada hari ini, besok, atau lusa.</p>
                   </td>
