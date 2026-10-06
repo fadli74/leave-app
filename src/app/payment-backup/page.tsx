@@ -146,7 +146,7 @@ export default function PaymentBackupPage() {
                   <th className="px-6 py-4 font-semibold">BANK & REK</th>
                   <th className="px-6 py-4 font-semibold">FOTO MASUK</th>
                   <th className="px-6 py-4 font-semibold">FOTO PULANG</th>
-                  <th className="px-6 py-4 font-semibold">PAYMENT</th>
+                  <th className="px-6 py-4 font-semibold">BUKTI PEMBAYARAN</th>
                 </tr>
               </thead>
               <tbody className={`divide-y divide-gray-100 dark:divide-gray-700 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
