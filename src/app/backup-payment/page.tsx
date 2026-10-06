@@ -149,34 +149,45 @@ export default function BackupPaymentForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // We will just simulate a submission for now since we don't have the new Apps Script URL
+    const payload = {
+      action: 'backupPayment',
+      ...formData
+    };
+    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      alert("Data Backup & Payment berhasil disimpan! (SIMULASI)");
-      
-      // Reset form
-      setFormData({
-        namaBackup: '',
-        cabangDitempatkan: '',
-        namaKaryawan: '',
-        employeeId: '',
-        job: '',
-        bank: '',
-        noRekening: '',
-        tanggalBackup: '',
-        fotoMasuk: '',
-        fotoPulang: '',
-        payment: ''
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
       });
-      setFotoMasukName('');
-      setFotoPulangName('');
+      
+      const result = await response.json();
+      if (result.status === 'success') {
+        alert("Data Backup berhasil disimpan!");
+        // Reset form
+        setFormData({
+          namaBackup: '',
+          cabangDitempatkan: '',
+          namaKaryawan: '',
+          employeeId: '',
+          job: '',
+          bank: '',
+          noRekening: '',
+          tanggalBackup: '',
+          fotoMasuk: '',
+          fotoPulang: ''
+        });
+        setFotoMasukName('');
+        setFotoPulangName('');
+      } else {
+        alert("Gagal menyimpan data: " + result.message);
+      }
     } catch (err) {
-      alert("Terjadi kesalahan.");
+      console.error(err);
+      alert("Terjadi kesalahan saat mengirim data. Pastikan koneksi internet stabil.");
     } finally {
       setIsSubmitting(false);
     }
