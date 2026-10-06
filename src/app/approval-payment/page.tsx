@@ -149,7 +149,7 @@ export default function ApprovalPaymentPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800">
+      <div className={`flex-1 overflow-auto rounded-xl border shadow-sm ${isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"}`}>
         <div className="min-w-[1100px] w-full">
           <table className="w-full text-sm text-left">
             <thead className={`text-xs uppercase sticky top-0 z-10 shadow-sm ${
@@ -175,9 +175,9 @@ export default function ApprovalPaymentPage() {
                       <div className="font-medium">{req['Tanggal Backup']?.substring(0, 10)}</div>
                     </td>
                     <td className="px-6 py-4 font-medium">{req['Nama Backup']}</td>
-                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{req['Cabang Ditempatkan']}</td>
+                    <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{req['Cabang Ditempatkan']}</td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-[#0c392c] dark:text-emerald-400">{req['Bank']}</div>
+                      <div className={`font-medium ${isDarkMode ? "text-emerald-400" : "text-[#0c392c]"}`}>{req['Bank']}</div>
                       <div className="text-xs text-gray-500">{req['No Rekening']}</div>
                     </td>
                     <td className="px-6 py-4">
