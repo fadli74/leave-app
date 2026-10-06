@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/components/MainLayout';
 import { CheckCircle, XCircle, Clock, Search, Loader2, Download } from 'lucide-react';
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbxKBILoYGh1HcNCU7yGTr9wON9ShjNNWpbIgp7xyvrAu8SgZRECAVLSNoY-vmpBTmKLcA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwMTwTLCd0x_lhdnj9QqPLUUKxoR__NwnIuL3Ml1Rfy9yS6-Tz6wPBxQScxovXy_PAWlQ/exec';
 
 export default function StatusPage() {
   const { isDarkMode, startDate, endDate, searchQuery } = useAppContext();
