@@ -134,7 +134,7 @@ export default function PaymentBackupPage() {
             <Loader2 className="w-8 h-8 text-[#0c392c] animate-spin mb-2" />
             <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Mengambil data...</p>
           </div>
-        ) : filteredData.length > 0 ? (
+        ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="text-xs uppercase border-b bg-[#0c392c] text-emerald-50 border-[#082a20]">
@@ -150,47 +150,51 @@ export default function PaymentBackupPage() {
                 </tr>
               </thead>
               <tbody className={`divide-y divide-gray-100 dark:divide-gray-700 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                {filteredData.map((row, idx) => (
-                  <tr key={idx} className={`hover:bg-gray-50/50 transition-colors ${isDarkMode ? 'hover:bg-gray-700/30' : ''}`}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {row['Tanggal Backup'] || '-'}
-                    </td>
-                    <td className={`px-6 py-4 font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                      {row['Nama Backup'] || '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      {row['Nama Karyawan'] || '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      {row['Cabang Ditempatkan'] || '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="font-semibold">{row['Bank'] || '-'}</span>
-                        <span className="text-xs opacity-80">{row['No Rekening'] || '-'}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {row['Foto Masuk'] ? (
-                        <a href={row['Foto Masuk']} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Lihat Foto</a>
-                      ) : '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      {row['Foto Pulang'] ? (
-                        <a href={row['Foto Pulang']} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Lihat Foto</a>
-                      ) : '-'}
-                    </td>
-                    <td className="px-6 py-4 font-bold text-emerald-600 dark:text-emerald-400">
-                      {row['Payment'] || '-'}
+                {filteredData.length > 0 ? (
+                  filteredData.map((row, idx) => (
+                    <tr key={idx} className={`hover:bg-gray-50/50 transition-colors ${isDarkMode ? 'hover:bg-gray-700/30' : ''}`}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {row['Tanggal Backup'] || '-'}
+                      </td>
+                      <td className={`px-6 py-4 font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                        {row['Nama Backup'] || '-'}
+                      </td>
+                      <td className="px-6 py-4">
+                        {row['Nama Karyawan'] || '-'}
+                      </td>
+                      <td className="px-6 py-4">
+                        {row['Cabang Ditempatkan'] || '-'}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="font-semibold">{row['Bank'] || '-'}</span>
+                          <span className="text-xs opacity-80">{row['No Rekening'] || '-'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {row['Foto Masuk'] ? (
+                          <a href={row['Foto Masuk']} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Lihat Foto</a>
+                        ) : '-'}
+                      </td>
+                      <td className="px-6 py-4">
+                        {row['Foto Pulang'] ? (
+                          <a href={row['Foto Pulang']} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Lihat Foto</a>
+                        ) : '-'}
+                      </td>
+                      <td className="px-6 py-4 font-bold text-emerald-600 dark:text-emerald-400">
+                        {row['Payment'] || '-'}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                      Tidak ada data yang ditemukan.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Tidak ada data yang ditemukan.</p>
           </div>
         )}
       </div>
