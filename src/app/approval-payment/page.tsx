@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
-import { useAppContext } from '@/context/AppContext';
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
+import { useAppContext } from '@/components/MainLayout';
 import { Download, Search, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
