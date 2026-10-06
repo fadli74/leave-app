@@ -17,8 +17,7 @@ export default function BackupPaymentForm() {
     noRekening: '',
     tanggalBackup: '',
     fotoMasuk: '',
-    fotoPulang: '',
-    payment: ''
+    fotoPulang: ''
   });
   
   const [fotoMasukName, setFotoMasukName] = useState('');
