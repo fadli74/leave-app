@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/components/MainLayout';
 import { Search, CalendarDays } from 'lucide-react';
@@ -115,7 +115,7 @@ export default function MonitoringPage() {
                 <th className="px-6 py-4 font-bold">TGL MULAI</th>
                 <th className="px-6 py-4 font-bold">TGL SELESAI</th>
                 <th className="px-6 py-4 font-bold">KETERANGAN HARI</th>
-                <th className="px-6 py-4 font-bold">STATUS</th>
+                <th className="px-6 py-4 font-bold">BACKUP & TELP</th>
               </tr>
             </thead>
             <tbody>
@@ -140,8 +140,9 @@ export default function MonitoringPage() {
                     <td className="px-6 py-4 font-bold uppercase tracking-wider">
                       {req._monitorType === 'today' ? 'Hari Ini' : (req._monitorType === 'tomorrow' ? 'Besok (H+1)' : 'Lusa (H+2)')}
                     </td>
-                    <td className="px-6 py-4 font-semibold uppercase">
-                      {req['Status'] || req.Status || 'Pending'}
+                    <td className="px-6 py-4">
+                      <div className="font-semibold">{req['Nama Backup'] || '-'}</div>
+                      <div className="text-xs opacity-80">{req['No Telp'] || '-'}</div>
                     </td>
                   </tr>
                 ))
