@@ -139,6 +139,9 @@ export default function BackupPaymentForm() {
       } else {
         setFormData(prev => ({ ...prev, namaKaryawan: value, employeeId: '', job: '' }));
       }
+    } else if (name === 'noRekening') {
+      // Hanya izinkan angka untuk nomor rekening
+      setFormData(prev => ({ ...prev, [name]: value.replace(/\D/g, '') }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -251,7 +254,7 @@ export default function BackupPaymentForm() {
           </div>
           <div>
             <label htmlFor="noRekening" className={labelClass}>No Rekening</label>
-            <input type="text" name="noRekening" id="noRekening" required value={formData.noRekening} onChange={handleChange} className={inputClass} placeholder="Nomor Rekening" />
+            <input type="tel" name="noRekening" id="noRekening" required value={formData.noRekening} onChange={handleChange} className={inputClass} placeholder="Hanya angka..." />
           </div>
         </div>
 
