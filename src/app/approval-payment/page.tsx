@@ -1,6 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { Download, Search, CheckCircle, Clock } from 'lucide-react';
+import { Download, Search, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function ApprovalPaymentPage() {
@@ -18,7 +18,11 @@ export default function ApprovalPaymentPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingRow, setEditingRow] = useState<number | null>(null);
   const [paymentInput, setPaymentInput] = useState('');
+  const [buktiBase64, setBuktiBase64] = useState('');
+  const [buktiName, setBuktiName] = useState('');
+  const [buktiMimeType, setBuktiMimeType] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const cachedData = localStorage.getItem('paymentRequestsCache');
@@ -42,6 +46,25 @@ export default function ApprovalPaymentPage() {
       });
   }, []);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Ukuran file maksimal 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          setBuktiBase64(event.target.result.toString());
+          setBuktiName(file.name);
+          setBuktiMimeType(file.type || 'image/jpeg');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSavePayment = async (req: any) => {
     if (!req.rowNumber) {
       alert("Sistem belum siap. Mohon refresh halaman ini.");
@@ -52,20 +75,36 @@ export default function ApprovalPaymentPage() {
     try {
       const API_URL = "https://script.google.com/macros/s/AKfycbzCEjO2z3tnGwRtY4-zxLjrn-YEUh5pq7BKaDGOcJvPH3l8HxRaPdnU7uf0pm1giW0/exec";
       
+      const payload: any = {
+        action: 'updatePayment',
+        rowNumber: req.rowNumber,
+        payment: paymentInput
+      };
+
+      if (buktiBase64) {
+        payload.buktiFile = {
+          base64: buktiBase64,
+          name: buktiName,
+          mimeType: buktiMimeType
+        };
+      }
+
       const response = await fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({
-          action: 'updatePayment',
-          rowNumber: req.rowNumber,
-          payment: paymentInput
-        })
+        body: JSON.stringify(payload)
       });
       
       const result = await response.json();
       if (result.status === 'success') {
-        setRequests(prev => prev.map(item => item.rowNumber === req.rowNumber ? { ...item, Payment: paymentInput } : item));
+        setRequests(prev => prev.map(item => item.rowNumber === req.rowNumber ? { 
+          ...item, 
+          Payment: paymentInput,
+          'Bukti Pembayaran': result.buktiUrl || item['Bukti Pembayaran']
+        } : item));
         setEditingRow(null);
         setPaymentInput('');
+        setBuktiBase64('');
+        setBuktiName('');
       } else {
         alert("Gagal menyimpan payment: " + result.message);
       }
@@ -110,7 +149,7 @@ export default function ApprovalPaymentPage() {
       </div>
 
       <div className="flex-1 overflow-auto rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800">
-        <div className="min-w-[1000px] w-full">
+        <div className="min-w-[1100px] w-full">
           <table className="w-full text-sm text-left">
             <thead className={`text-xs uppercase sticky top-0 z-10 shadow-sm ${
               isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-50 text-gray-600'
@@ -119,9 +158,9 @@ export default function ApprovalPaymentPage() {
                 <th className="px-6 py-4 rounded-tl-lg font-bold">Tgl Backup</th>
                 <th className="px-6 py-4 font-bold">Karyawan (Pengganti)</th>
                 <th className="px-6 py-4 font-bold">Cabang</th>
-                <th className="px-6 py-4 font-bold">Karyawan Digantikan</th>
                 <th className="px-6 py-4 font-bold">Bank & Rek</th>
                 <th className="px-6 py-4 font-bold">Payment</th>
+                <th className="px-6 py-4 font-bold">Bukti Pembayaran</th>
                 <th className="px-6 py-4 rounded-tr-lg font-bold text-center w-40">Aksi</th>
               </tr>
             </thead>
@@ -136,7 +175,6 @@ export default function ApprovalPaymentPage() {
                     </td>
                     <td className="px-6 py-4 font-medium">{req['Nama Backup']}</td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{req['Cabang Ditempatkan']}</td>
-                    <td className="px-6 py-4">{req['Nama Karyawan']}</td>
                     <td className="px-6 py-4">
                       <div className="font-medium text-[#0c392c] dark:text-emerald-400">{req['Bank']}</div>
                       <div className="text-xs text-gray-500">{req['No Rekening']}</div>
@@ -157,6 +195,30 @@ export default function ApprovalPaymentPage() {
                     </td>
                     <td className="px-6 py-4">
                       {editingRow === req.rowNumber ? (
+                        <div className="flex flex-col gap-1">
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            className="hidden" 
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                          />
+                          <button 
+                            onClick={() => fileInputRef.current?.click()}
+                            className="text-xs flex items-center justify-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1.5 rounded border"
+                          >
+                            <Upload size={14} /> {buktiName ? "Ganti Foto" : "Upload Foto"}
+                          </button>
+                          {buktiName && <span className="text-[10px] text-emerald-600 truncate w-24" title={buktiName}>{buktiName}</span>}
+                        </div>
+                      ) : (
+                        req['Bukti Pembayaran'] ? (
+                          <a href={req['Bukti Pembayaran']} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline text-xs">Lihat Bukti</a>
+                        ) : <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      {editingRow === req.rowNumber ? (
                         <div className="flex gap-2 justify-center">
                           <button
                             onClick={() => handleSavePayment(req)}
@@ -166,7 +228,7 @@ export default function ApprovalPaymentPage() {
                             {isSaving ? '...' : 'Simpan'}
                           </button>
                           <button
-                            onClick={() => setEditingRow(null)}
+                            onClick={() => { setEditingRow(null); setBuktiName(''); setBuktiBase64(''); }}
                             disabled={isSaving}
                             className="text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded font-medium hover:bg-gray-300 disabled:opacity-50"
                           >
@@ -182,7 +244,7 @@ export default function ApprovalPaymentPage() {
                             }}
                             className="flex items-center gap-1.5 text-xs bg-[#0c392c] text-white px-3 py-1.5 rounded-md font-medium hover:bg-[#082a20] transition-colors"
                           >
-                            {req['Payment'] ? 'Edit Nominal' : 'Isi Nominal'}
+                            {req['Payment'] ? 'Edit' : 'Proses'}
                           </button>
                         </div>
                       )}
