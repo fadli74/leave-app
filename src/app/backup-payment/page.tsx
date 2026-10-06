@@ -163,7 +163,14 @@ export default function BackupPaymentForm() {
         body: JSON.stringify(payload)
       });
       
-      const result = await response.json();
+      let result;
+      const rawText = await response.text();
+      try {
+        result = JSON.parse(rawText);
+      } catch (parseError) {
+        throw new Error("Respons dari Google bukan JSON yang valid. Respons: " + rawText.substring(0, 100));
+      }
+      
       if (result.status === 'success') {
         alert("Data Backup berhasil disimpan!");
         // Reset form
@@ -184,9 +191,9 @@ export default function BackupPaymentForm() {
       } else {
         alert("Gagal menyimpan data: " + result.message);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Terjadi kesalahan saat mengirim data. Pastikan koneksi internet stabil.");
+      alert("Error Sistem: " + (err.message || err.toString()));
     } finally {
       setIsSubmitting(false);
     }
