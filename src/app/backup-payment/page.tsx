@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import React, { useState } from 'react';
 import { useAppContext } from '@/components/MainLayout';
 
@@ -90,7 +90,7 @@ export default function BackupPaymentForm() {
   return (
     <div className={`max-w-4xl mx-auto rounded-xl shadow-md overflow-hidden p-6 md:p-8 ${isDarkMode ? 'bg-gray-900 border border-gray-800' : 'bg-white'}`}>
       <div className="text-center mb-8">
-        <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Form Backup & Payment</h2>
+        <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Form Foto Backup</h2>
         <p className={`text-sm md:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Isi data absensi (foto masuk/pulang) untuk karyawan pengganti (backup).</p>
       </div>
 
