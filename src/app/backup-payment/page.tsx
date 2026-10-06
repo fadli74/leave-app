@@ -141,10 +141,6 @@ export default function BackupPaymentForm() {
             <label htmlFor="tanggalBackup" className={labelClass}>Tanggal Backup</label>
             <input type="date" name="tanggalBackup" id="tanggalBackup" required value={formData.tanggalBackup} onChange={handleChange} className={inputClass} style={isDarkMode ? { colorScheme: 'dark' } : {}} />
           </div>
-          <div>
-            <label htmlFor="payment" className={labelClass}>Payment (Opsional)</label>
-            <input type="text" name="payment" id="payment" value={formData.payment} onChange={handleChange} className={inputClass} placeholder="Rp / Nominal" />
-          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
