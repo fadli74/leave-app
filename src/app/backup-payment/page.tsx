@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/components/MainLayout';
 
+const API_URL = 'https://script.google.com/macros/s/AKfycbxKBILoYGh1HcNCU7yGTr9wON9ShjNNWpbIgp7xyvrAu8SgZRECAVLSNoY-vmpBTmKLcA/exec';
+
 export default function BackupPaymentForm() {
   const { isDarkMode } = useAppContext();
   
