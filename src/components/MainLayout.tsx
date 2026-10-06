@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
+  CalendarDays, 
   Database, 
   Users, 
   FileText, 
@@ -142,6 +143,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Status Approval</span>
                 </Link>
               </li>
+                <li>
+                  <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/monitoring" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/monitoring' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                    <CalendarDays size={20} className="shrink-0" />
+                    <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Monitoring</span>
+                  </Link>
+                </li>
 
               <li>
                 <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/backup" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/backup' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
