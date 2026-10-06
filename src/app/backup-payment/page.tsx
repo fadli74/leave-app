@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/components/MainLayout';
 
 export default function BackupPaymentForm() {
@@ -22,6 +22,30 @@ export default function BackupPaymentForm() {
   const [fotoMasukName, setFotoMasukName] = useState('');
   const [fotoPulangName, setFotoPulangName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [branches, setBranches] = useState<string[]>([]);
+  const [isLoadingBranches, setIsLoadingBranches] = useState(true);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const res = await fetch('https://docs.google.com/spreadsheets/d/1UyaqSC7BxG9wIEyVTHMnZU6dB---juCogG2pzAQL7XE/export?format=csv&gid=547191360');
+        const csv = await res.text();
+        const lines = csv.split('\n');
+        const uniqueBranches = new Set<string>();
+        for (let i = 1; i < lines.length; i++) {
+          if (!lines[i].trim()) continue;
+          const branch = lines[i].split(',')[0].trim().replace(/^"|"$/g, '');
+          if (branch) uniqueBranches.add(branch);
+        }
+        setBranches(Array.from(uniqueBranches).sort());
+      } catch (err) {
+        console.error("Failed to load branches:", err);
+      } finally {
+        setIsLoadingBranches(false);
+      }
+    };
+    fetchBranches();
+  }, []);
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -105,8 +129,23 @@ export default function BackupPaymentForm() {
             <input type="text" name="namaBackup" id="namaBackup" required value={formData.namaBackup} onChange={handleChange} className={inputClass} placeholder="Nama karyawan pengganti" />
           </div>
           <div>
-            <label htmlFor="cabangDitempatkan" className={labelClass}>Cabang Ditempatkan</label>
-            <input type="text" name="cabangDitempatkan" id="cabangDitempatkan" required value={formData.cabangDitempatkan} onChange={handleChange} className={inputClass} placeholder="Lokasi cabang" />
+            <label htmlFor="cabangDitempatkan" className={labelClass}>
+              Cabang Ditempatkan
+              {isLoadingBranches && <span className="text-blue-500 text-xs ml-2">(Memuat...)</span>}
+            </label>
+            <select 
+              name="cabangDitempatkan" 
+              id="cabangDitempatkan" 
+              required 
+              value={formData.cabangDitempatkan} 
+              onChange={handleChange} 
+              className={inputClass}
+            >
+              <option value="">Pilih Cabang...</option>
+              {branches.map((b, idx) => (
+                <option key={idx} value={b}>{b}</option>
+              ))}
+            </select>
           </div>
         </div>
 
