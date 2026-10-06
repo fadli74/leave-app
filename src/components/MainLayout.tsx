@@ -79,7 +79,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     setIsLoggingIn(true);
     setLoginError('');
     try {
-      const res = await fetch('https://script.google.com/macros/s/AKfycbxKBILoYGh1HcNCU7yGTr9wON9ShjNNWpbIgp7xyvrAu8SgZRECAVLSNoY-vmpBTmKLcA/exec?sheetName=User%20Atasan');
+      const res = await fetch('https://script.google.com/macros/s/AKfycbzCEjO2z3tnGwRtY4-zxLjrn-YEUh5pq7BKaDGOcJvPH3l8HxRaPdnU7uf0pm1giW0/exec?sheetName=User%20Atasan');
       const users = await res.json();
       
       const user = users.find((u: any) => 
