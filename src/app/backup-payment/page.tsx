@@ -11,6 +11,8 @@ export default function BackupPaymentForm() {
     namaKaryawan: '',
     employeeId: '',
     job: '',
+    bank: '',
+    noRekening: '',
     tanggalBackup: '',
     fotoMasuk: '',
     fotoPulang: '',
@@ -68,6 +70,8 @@ export default function BackupPaymentForm() {
         namaKaryawan: '',
         employeeId: '',
         job: '',
+        bank: '',
+        noRekening: '',
         tanggalBackup: '',
         fotoMasuk: '',
         fotoPulang: '',
@@ -118,6 +122,17 @@ export default function BackupPaymentForm() {
           <div>
             <label htmlFor="job" className={labelClass}>Job</label>
             <input type="text" name="job" id="job" required value={formData.job} onChange={handleChange} className={inputClass} placeholder="Posisi/Jabatan" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="bank" className={labelClass}>Bank</label>
+            <input type="text" name="bank" id="bank" required value={formData.bank} onChange={handleChange} className={inputClass} placeholder="Nama Bank (BCA, Mandiri, dll)" />
+          </div>
+          <div>
+            <label htmlFor="noRekening" className={labelClass}>No Rekening</label>
+            <input type="text" name="noRekening" id="noRekening" required value={formData.noRekening} onChange={handleChange} className={inputClass} placeholder="Nomor Rekening" />
           </div>
         </div>
 

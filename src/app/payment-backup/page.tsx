@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/components/MainLayout';
 import { Download, Loader2, Search } from 'lucide-react';
@@ -143,6 +143,7 @@ export default function PaymentBackupPage() {
                   <th className="px-6 py-4 font-semibold">NAMA BACKUP</th>
                   <th className="px-6 py-4 font-semibold">KARYAWAN CUTI</th>
                   <th className="px-6 py-4 font-semibold">CABANG</th>
+                  <th className="px-6 py-4 font-semibold">BANK & REK</th>
                   <th className="px-6 py-4 font-semibold">FOTO MASUK</th>
                   <th className="px-6 py-4 font-semibold">FOTO PULANG</th>
                   <th className="px-6 py-4 font-semibold">PAYMENT</th>
@@ -162,6 +163,12 @@ export default function PaymentBackupPage() {
                     </td>
                     <td className="px-6 py-4">
                       {row['Cabang Ditempatkan'] || '-'}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="font-semibold">{row['Bank'] || '-'}</span>
+                        <span className="text-xs opacity-80">{row['No Rekening'] || '-'}</span>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       {row['Foto Masuk'] ? (
