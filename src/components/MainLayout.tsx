@@ -173,6 +173,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     </Link>
                   </li>
                   <li>
+                      <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/approval-payment" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/approval-payment' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+                        <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Approval Payment</span>
+                      </Link>
+                    </li>
+                    <li>
                     <Link onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} href="/karyawan" className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${pathname === '/karyawan' ? 'bg-white/10 text-white border-l-4 border-emerald-400' : 'hover:bg-white/5 hover:text-white'}`}>
                       <Users size={20} />
                       <span className={`text-sm font-medium transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Daftar Karyawan</span>
