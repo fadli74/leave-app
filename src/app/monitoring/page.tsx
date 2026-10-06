@@ -145,7 +145,7 @@ export default function MonitoringPage() {
                       {req['Nama Backup'] || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {req['No Telp'] || '-'}
+                      {req['No Telp / HP'] || req['No Telp'] || '-'}
                     </td>
                   </tr>
                 ))
