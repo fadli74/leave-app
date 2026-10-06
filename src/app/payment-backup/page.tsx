@@ -181,9 +181,13 @@ export default function PaymentBackupPage() {
                           <a href={row['Foto Pulang']} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Lihat Foto</a>
                         ) : '-'}
                       </td>
-                      <td className="px-6 py-4 font-bold text-emerald-600 dark:text-emerald-400">
-                        {row['Payment'] || '-'}
-                      </td>
+                      <td className="px-6 py-4">
+                          {row['Bukti Pembayaran'] ? (
+                            <a href={row['Bukti Pembayaran']} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Lihat Bukti</a>
+                          ) : (
+                            row['Payment'] ? <span className="font-bold text-emerald-600 dark:text-emerald-400">{row['Payment']}</span> : '-'
+                          )}
+                        </td>
                     </tr>
                   ))
                 ) : (
