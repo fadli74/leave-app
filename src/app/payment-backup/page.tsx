@@ -154,7 +154,7 @@ export default function PaymentBackupPage() {
                   filteredData.map((row, idx) => (
                     <tr key={idx} className={`hover:bg-gray-50/50 transition-colors ${isDarkMode ? 'hover:bg-gray-700/30' : ''}`}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {row['Tanggal Backup'] ? new Date(row['Tanggal Backup']).toLocaleDateString('en-GB') : '-'}
+                        {row['Tanggal Backup'] ? new Date(row['Tanggal Backup']).toLocaleDateString('id-ID', {day: '2-digit', month: '2-digit', year: 'numeric'}) : '-'}
                       </td>
                       <td className={`px-6 py-4 font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                         {row['Nama Backup'] || '-'}

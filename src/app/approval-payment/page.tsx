@@ -172,7 +172,7 @@ export default function ApprovalPaymentPage() {
                     isDarkMode ? 'border-gray-700 hover:bg-gray-700/50' : 'border-gray-100 hover:bg-gray-50'
                   }`}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium">{req['Tanggal Backup'] ? new Date(req['Tanggal Backup']).toLocaleDateString('en-GB') : '-'}</div>
+                      <div className="font-medium">{req['Tanggal Backup'] ? new Date(req['Tanggal Backup']).toLocaleDateString('id-ID', {day: '2-digit', month: '2-digit', year: 'numeric'}) : '-'}</div>
                     </td>
                     <td className="px-6 py-4 font-medium">{req['Nama Backup']}</td>
                     <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{req['Cabang Ditempatkan']}</td>
