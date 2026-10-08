@@ -219,6 +219,28 @@ export default function ApprovalPaymentPage() {
                         ) : <span className="text-gray-400">-</span>
                       )}
                     </td>
+                      <td className="px-6 py-4 text-center">
+                        {(() => {
+                           const currentTgl = (editingRow === req.rowNumber) ? tglPaymentInput : (req['Tgl Payment'] || req['Payment']);
+                           if (!currentTgl || !req['Tanggal Backup']) return <span className="text-gray-400">-</span>;
+                           const tglPayment = new Date(currentTgl);
+                           const tglBackup = new Date(req['Tanggal Backup']);
+                           tglPayment.setHours(0,0,0,0);
+                           tglBackup.setHours(0,0,0,0);
+                           const diffTime = tglPayment.getTime() - tglBackup.getTime();
+                           const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                           
+                           let circleClass = "";
+                           let titleText = `SLA: ${diffDays} hari`;
+                           if (diffDays === 0) circleClass = "bg-blue-500";
+                           else if (diffDays === 1) circleClass = "bg-emerald-500";
+                           else if (diffDays === 2) circleClass = "bg-yellow-400";
+                           else if (diffDays >= 3) circleClass = "bg-red-500";
+                           else circleClass = "bg-gray-400";
+                           
+                           return <div className={`w-4 h-4 rounded-full mx-auto shadow-sm ${circleClass}`} title={titleText}></div>;
+                        })()}
+                      </td>
                     <td className="px-6 py-4">
                       {editingRow === req.rowNumber ? (
                         <div className="flex gap-2 justify-center">
