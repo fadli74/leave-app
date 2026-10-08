@@ -200,6 +200,7 @@ export default function BackupPage() {
                   <th className="px-6 py-4 font-semibold">NO. TELP</th>
                   <th className="px-6 py-4 font-semibold">TGL MULAI</th>
                   <th className="px-6 py-4 font-semibold">TGL SELESAI</th>
+                    <th className="px-6 py-4 font-semibold text-center">TOTAL HARI</th>
                     <th className="px-6 py-4 font-semibold text-center">STATUS</th>
                   {userRole === 'atasan' && <th className="px-6 py-4 font-semibold text-center">AKSI</th>}
                 </tr>
@@ -236,7 +237,10 @@ export default function BackupPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {req['Tanggal Selesai'] ? new Date(req['Tanggal Selesai']).toLocaleDateString('id-ID') : '-'}
-                    </td>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center font-medium">
+                        {req['Total Hari'] ? `${req['Total Hari']} Hari` : '-'}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         {(() => {
                            const namaBackup = req['Nama Backup'] || '';
