@@ -163,6 +163,7 @@ export default function ApprovalPaymentPage() {
                 <th className="px-6 py-4 font-bold">Bank & Rek</th>
                 <th className="px-6 py-4 font-bold">Tgl Payment</th>
                 <th className="px-6 py-4 font-bold">Bukti Pembayaran</th>
+                  <th className="px-6 py-4 font-bold text-center">Status</th>
                 <th className="px-6 py-4 rounded-tr-lg font-bold text-center w-40">Aksi</th>
               </tr>
             </thead>
