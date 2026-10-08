@@ -18,7 +18,7 @@ export default function ApprovalPaymentPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingRow, setEditingRow] = useState<number | null>(null);
-  const [paymentInput, setPaymentInput] = useState('');
+  const [tglPaymentInput, setTglPaymentInput] = useState('');
   const [buktiBase64, setBuktiBase64] = useState('');
   const [buktiName, setBuktiName] = useState('');
   const [buktiMimeType, setBuktiMimeType] = useState('');
@@ -79,7 +79,7 @@ export default function ApprovalPaymentPage() {
       const payload: any = {
         action: 'updatePayment',
         rowNumber: req.rowNumber,
-        payment: paymentInput
+        payment: tglPaymentInput
       };
 
       if (buktiBase64) {
@@ -103,7 +103,7 @@ export default function ApprovalPaymentPage() {
           'Bukti Pembayaran': result.buktiUrl || item['Bukti Pembayaran']
         } : item));
         setEditingRow(null);
-        setPaymentInput('');
+        setTglPaymentInput('');
         setBuktiBase64('');
         setBuktiName('');
       } else {
@@ -160,7 +160,7 @@ export default function ApprovalPaymentPage() {
                 <th className="px-6 py-4 font-bold">Karyawan (Pengganti)</th>
                 <th className="px-6 py-4 font-bold">Cabang</th>
                 <th className="px-6 py-4 font-bold">Bank & Rek</th>
-                <th className="px-6 py-4 font-bold">Payment</th>
+                <th className="px-6 py-4 font-bold">Tgl Payment</th>
                 <th className="px-6 py-4 font-bold">Bukti Pembayaran</th>
                 <th className="px-6 py-4 rounded-tr-lg font-bold text-center w-40">Aksi</th>
               </tr>
@@ -191,7 +191,7 @@ export default function ApprovalPaymentPage() {
                           autoFocus
                         />
                       ) : (
-                        <div className="font-semibold">{req['Payment'] || '-'}</div>
+                        <div className="font-semibold">{req['Tgl Payment'] || req['Payment'] ? new Date(req['Tgl Payment'] || req['Payment']).toLocaleDateString('id-ID', {day: '2-digit', month: '2-digit', year: 'numeric'}) : '-'}</div>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -241,11 +241,11 @@ export default function ApprovalPaymentPage() {
                           <button
                             onClick={() => {
                               setEditingRow(req.rowNumber);
-                              setPaymentInput(req['Payment'] || '');
+                              setTglPaymentInput(req['Tgl Payment'] || req['Payment'] || '');
                             }}
                             className="flex items-center gap-1.5 text-xs bg-[#0c392c] text-white px-3 py-1.5 rounded-md font-medium hover:bg-[#082a20] transition-colors"
                           >
-                            {req['Payment'] ? 'Edit' : 'Proses'}
+                            {(req['Tgl Payment'] || req['Payment']) ? 'Edit' : 'Proses'}
                           </button>
                         </div>
                       )}
