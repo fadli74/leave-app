@@ -99,7 +99,8 @@ export default function ApprovalPaymentPage() {
       if (result.status === 'success') {
         setRequests(prev => prev.map(item => item.rowNumber === req.rowNumber ? { 
           ...item, 
-          Payment: paymentInput,
+          Payment: tglPaymentInput,
+            'Tgl Payment': tglPaymentInput,
           'Bukti Pembayaran': result.buktiUrl || item['Bukti Pembayaran']
         } : item));
         setEditingRow(null);
