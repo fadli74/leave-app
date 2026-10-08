@@ -237,9 +237,26 @@ export default function BackupPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       {req['Tanggal Selesai'] ? new Date(req['Tanggal Selesai']).toLocaleDateString('id-ID') : '-'}
                     </td>
-                    {userRole === 'atasan' && (<td className="px-6 py-4"><div className="flex gap-2 justify-center"><button onClick={() => handleEditClick(req)} className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md transition-colors" title="Edit Data"><Pencil size={18} /></button><button onClick={() => handleDeleteClick(req)} className="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition-colors" title="Hapus Data"><Trash2 size={18} /></button></div></td>)}
-                  </tr>
-                ))}
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {(() => {
+                           const namaBackup = req['Nama Backup'] || '';
+                           const noTelp = req['No Telp / HP'] || req['No Telp'] || '';
+                           const hasNama = namaBackup.toString().trim() !== '';
+                           const hasTelp = noTelp.toString().trim() !== '';
+                           
+                           if (hasNama && hasTelp) {
+                             return <div className="w-4 h-4 rounded-full bg-emerald-500 mx-auto shadow-sm" title="Lengkap (Hijau)"></div>;
+                           } else if (hasNama && !hasTelp) {
+                             return <div className="w-4 h-4 rounded-full bg-yellow-400 mx-auto shadow-sm" title="No Telp Belum Ada (Kuning)"></div>;
+                           } else {
+                             return <div className="w-4 h-4 rounded-full bg-red-500 mx-auto shadow-sm" title="Belum Ada Backup (Merah)"></div>;
+                           }
+                        })()}
+                      </td>
+                      {userRole === 'atasan' && (<td className="px-6 py-4"><div className="flex gap-2 justify-center"><button onClick={() => handleEditClick(req)} className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md transition-colors" title="Edit Data"><Pencil size={18} /></button><button onClick={() => handleDeleteClick(req)} className="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition-colors" title="Hapus Data"><Trash2 size={18} /></button></div></td>)}
+                    </tr>
+                  ));
+                })()}
               </tbody>
             </table>
           </div>
