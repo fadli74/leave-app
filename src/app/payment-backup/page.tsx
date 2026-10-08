@@ -147,6 +147,7 @@ export default function PaymentBackupPage() {
                   <th className="px-6 py-4 font-semibold">FOTO MASUK</th>
                   <th className="px-6 py-4 font-semibold">FOTO PULANG</th>
                   <th className="px-6 py-4 font-semibold">BUKTI PEMBAYARAN</th>
+                    <th className="px-6 py-4 font-semibold text-center">STATUS</th>
                 </tr>
               </thead>
               <tbody className={`divide-y divide-gray-100 dark:divide-gray-700 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -185,8 +186,30 @@ export default function PaymentBackupPage() {
                           {row['Bukti Pembayaran'] ? (
                             <a href={row['Bukti Pembayaran']} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Lihat Bukti</a>
                           ) : (
-                            row['Tgl Payment'] ? <span className="font-bold text-emerald-600 dark:text-emerald-400">{row['Tgl Payment']}</span> : '-'
+                            row['Tgl Payment'] ? <span className="font-bold text-emerald-600 dark:text-emerald-400">{new Date(row['Tgl Payment']).toLocaleDateString('id-ID', {day: '2-digit', month: '2-digit', year: 'numeric'})}</span> : '-'
                           )}
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          {(() => {
+                             if (!row['Tgl Payment'] || !row['Tanggal Backup']) return '-';
+                             const tglPayment = new Date(row['Tgl Payment']);
+                             const tglBackup = new Date(row['Tanggal Backup']);
+                             // Reset time parts to strictly calculate day differences
+                             tglPayment.setHours(0,0,0,0);
+                             tglBackup.setHours(0,0,0,0);
+                             const diffTime = tglPayment.getTime() - tglBackup.getTime();
+                             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                             
+                             let circleClass = "";
+                             let titleText = `SLA: ${diffDays} hari`;
+                             if (diffDays === 0) circleClass = "bg-blue-500";
+                             else if (diffDays === 1) circleClass = "bg-emerald-500";
+                             else if (diffDays === 2) circleClass = "bg-yellow-400";
+                             else if (diffDays >= 3) circleClass = "bg-red-500";
+                             else circleClass = "bg-gray-400"; // For negative days?
+                             
+                             return <div className={`w-4 h-4 rounded-full mx-auto shadow-sm ${circleClass}`} title={titleText}></div>;
+                          })()}
                         </td>
                     </tr>
                   ))
