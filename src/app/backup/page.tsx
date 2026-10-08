@@ -200,11 +200,21 @@ export default function BackupPage() {
                   <th className="px-6 py-4 font-semibold">NO. TELP</th>
                   <th className="px-6 py-4 font-semibold">TGL MULAI</th>
                   <th className="px-6 py-4 font-semibold">TGL SELESAI</th>
+                    <th className="px-6 py-4 font-semibold text-center">STATUS</th>
                   {userRole === 'atasan' && <th className="px-6 py-4 font-semibold text-center">AKSI</th>}
                 </tr>
               </thead>
               <tbody className={`divide-y divide-gray-100 dark:divide-gray-700 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                {filteredRequests.map((req, idx) => (
+                {(() => {
+
+                const sortedRequests = [...filteredRequests].sort((a, b) => {
+                  const dateA = new Date(a['Tanggal Mulai'] || a['Timestamp']).getTime();
+                  const dateB = new Date(b['Tanggal Mulai'] || b['Timestamp']).getTime();
+                  return dateB - dateA;
+                });
+                
+                return sortedRequests.map((req, idx) => (
+
                   <tr key={idx} className={`hover:bg-gray-50/50 transition-colors ${isDarkMode ? 'hover:bg-gray-700/30' : ''}`}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {req['Timestamp'] ? new Date(req['Timestamp']).toLocaleDateString('id-ID') : '-'}
