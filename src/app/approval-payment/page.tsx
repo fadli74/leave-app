@@ -184,13 +184,12 @@ export default function ApprovalPaymentPage() {
                     <td className="px-6 py-4">
                       {editingRow === req.rowNumber ? (
                         <input
-                          type="text"
-                          value={paymentInput}
-                          onChange={(e) => setPaymentInput(e.target.value)}
-                          placeholder="Rp..."
-                          className="w-full px-2 py-1 border rounded text-sm text-black"
-                          autoFocus
-                        />
+                            type="date"
+                            value={tglPaymentInput ? (tglPaymentInput.includes('T') ? tglPaymentInput.split('T')[0] : (tglPaymentInput.includes('/') ? tglPaymentInput.split('/').reverse().join('-') : tglPaymentInput)) : ''}
+                            onChange={(e) => setTglPaymentInput(e.target.value)}
+                            className="w-full px-2 py-1 border rounded text-sm text-black"
+                            autoFocus
+                          />
                       ) : (
                         <div className="font-semibold">{req['Tgl Payment'] || req['Payment'] ? new Date(req['Tgl Payment'] || req['Payment']).toLocaleDateString('id-ID', {day: '2-digit', month: '2-digit', year: 'numeric'}) : '-'}</div>
                       )}
