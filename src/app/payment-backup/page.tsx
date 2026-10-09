@@ -152,7 +152,11 @@ export default function PaymentBackupPage() {
               </thead>
               <tbody className={`divide-y divide-gray-100 dark:divide-gray-700 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 {filteredData.length > 0 ? (
-                  filteredData.map((row, idx) => (
+                    [...filteredData].sort((a, b) => {
+                      const dateA = a['Tanggal Backup'] ? new Date(a['Tanggal Backup']).getTime() : 0;
+                      const dateB = b['Tanggal Backup'] ? new Date(b['Tanggal Backup']).getTime() : 0;
+                      return dateB - dateA;
+                    }).map((row, idx) => (
                     <tr key={idx} className={`hover:bg-gray-50/50 transition-colors ${isDarkMode ? 'hover:bg-gray-700/30' : ''}`}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {row['Tanggal Backup'] ? new Date(row['Tanggal Backup']).toLocaleDateString('id-ID', {day: '2-digit', month: '2-digit', year: 'numeric'}) : '-'}
