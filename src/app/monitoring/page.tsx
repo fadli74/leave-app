@@ -105,9 +105,7 @@ export default function MonitoringPage() {
       <div className={`flex-1 overflow-auto rounded-xl border shadow-sm ${isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"}`}>
         <div className="min-w-[900px] w-full">
           <table className="w-full text-sm text-left">
-            <thead className={`text-xs uppercase sticky top-0 z-10 shadow-sm ${
-              isDarkMode ? 'bg-gray-700 text-gray-300 border-b border-gray-600' : 'bg-gray-50 text-gray-600 border-b border-gray-200'
-            }`}>
+            <thead className="text-xs uppercase sticky top-0 z-10 shadow-sm border-b bg-[#0c392c] text-emerald-50 border-[#082a20]">
               <tr>
                 <th className="px-6 py-4 font-bold">KARYAWAN</th>
                 <th className="px-6 py-4 font-bold">CABANG</th>
