@@ -11,7 +11,7 @@ export default function Dashboard() {
   const { isDarkMode, userRole, startDate, endDate, searchQuery } = useAppContext();
   const [rawFormData, setRawFormData] = React.useState<any[]>([]);
   const [totalKaryawan, setTotalKaryawan] = React.useState<number | string>('...');
-  const [totalTanpaKeterangan, setTotalTanpaKeterangan] = React.useState<number | string>('...');
+  const [totalUnpaidLeave, setTotalUnpaidLeave] = React.useState<number | string>('...');
   const [totalCuti, setTotalCuti] = React.useState<number | string>('...');
   const [totalSakit, setTotalSakit] = React.useState<number | string>('...');
   const [chartData, setChartData] = React.useState<any[]>([]);
@@ -62,7 +62,7 @@ export default function Dashboard() {
       })
       .catch(err => {
         console.error("Gagal mengambil data form cuti:", err);
-        setTotalTanpaKeterangan('-');
+        setTotalUnpaidLeave('-');
         setTotalCuti('-');
         setTotalSakit('-');
       });
@@ -100,7 +100,7 @@ export default function Dashboard() {
       });
     }
 
-    let tanpaKet = 0;
+    let unpaidLeave = 0;
     let cuti = 0;
     let sakit = 0;
     
@@ -114,12 +114,12 @@ export default function Dashboard() {
       const day = d.getDate().toString().padStart(2, '0');
       const month = d.toLocaleString('id-ID', { month: 'short' });
       const dateStr = `${day} ${month}`;
-      groupedByDate[dateStr] = { name: dateStr, cuti: 0, sakit: 0, tanpa: 0, rawDate: d.getTime() };
+      groupedByDate[dateStr] = { name: dateStr, cuti: 0, sakit: 0, unpaid: 0, rawDate: d.getTime() };
     }
 
     dataToProcess.forEach(row => {
       const jenis = String(row['Jenis Cuti/Izin'] || '').toLowerCase();
-      if (jenis.includes('tanpa keterangan')) tanpaKet++;
+      if (jenis.includes('unpaid leave')) unpaidLeave++;
       else if (jenis.includes('cuti')) cuti++;
       else if (jenis.includes('sakit')) sakit++;
       
@@ -131,12 +131,12 @@ export default function Dashboard() {
          const dateStr = `${day} ${month}`;
          
          if (groupedByDate[dateStr]) {
-           if (jenis.includes('tanpa keterangan')) groupedByDate[dateStr].tanpa++;
+           if (jenis.includes('unpaid leave')) groupedByDate[dateStr].unpaid++;
            else if (jenis.includes('cuti')) groupedByDate[dateStr].cuti++;
            else if (jenis.includes('sakit')) groupedByDate[dateStr].sakit++;
          } else {
-           groupedByDate[dateStr] = { name: dateStr, cuti: 0, sakit: 0, tanpa: 0, rawDate: dateObj.getTime() };
-           if (jenis.includes('tanpa keterangan')) groupedByDate[dateStr].tanpa++;
+           groupedByDate[dateStr] = { name: dateStr, cuti: 0, sakit: 0, unpaid: 0, rawDate: dateObj.getTime() };
+           if (jenis.includes('unpaid leave')) groupedByDate[dateStr].unpaid++;
            else if (jenis.includes('cuti')) groupedByDate[dateStr].cuti++;
            else if (jenis.includes('sakit')) groupedByDate[dateStr].sakit++;
          }
@@ -145,22 +145,22 @@ export default function Dashboard() {
       let customer = String(row['Costomer'] || '').trim();
       if (customer && customer.toLowerCase() !== 'approved') {
           if (!groupedByCustomer[customer]) {
-             groupedByCustomer[customer] = { name: customer, cuti: 0, sakit: 0, tanpa: 0 };
+             groupedByCustomer[customer] = { name: customer, cuti: 0, sakit: 0, unpaid: 0 };
           }
-          if (jenis.includes('tanpa keterangan')) groupedByCustomer[customer].tanpa++;
+          if (jenis.includes('unpaid leave')) groupedByCustomer[customer].unpaid++;
           else if (jenis.includes('cuti')) groupedByCustomer[customer].cuti++;
           else if (jenis.includes('sakit')) groupedByCustomer[customer].sakit++;
       }
     });
     
-    setTotalTanpaKeterangan(tanpaKet);
+    setTotalUnpaidLeave(unpaidLeave);
     setTotalCuti(cuti);
     setTotalSakit(sakit);
     
     const newChartData = Object.values(groupedByDate).sort((a: any, b: any) => a.rawDate - b.rawDate);
     setChartData(newChartData);
     
-    const newCustomerData = Object.values(groupedByCustomer).sort((a: any, b: any) => (b.cuti + b.sakit + b.tanpa) - (a.cuti + a.sakit + a.tanpa));
+    const newCustomerData = Object.values(groupedByCustomer).sort((a: any, b: any) => (b.cuti + b.sakit + b.unpaid) - (a.cuti + a.sakit + a.unpaid));
     setCustomerStats(newCustomerData);
   }, [rawFormData, startDate, endDate, searchQuery]);
 
@@ -198,8 +198,8 @@ export default function Dashboard() {
             <Clock size={24} />
           </div>
           <div>
-            <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Tanpa keterangan</p>
-            <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{totalTanpaKeterangan}</h3>
+            <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Unpaid Leave</p>
+            <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{totalUnpaidLeave}</h3>
           </div>
         </div>
 
@@ -240,7 +240,7 @@ export default function Dashboard() {
                 <Tooltip contentStyle={{backgroundColor: isDarkMode ? '#1f2937' : '#fff', borderColor: isDarkMode ? '#374151' : '#eee', color: isDarkMode ? '#fff' : '#000'}} />
                 <Line type="monotone" dataKey="cuti" stroke="#3b82f6" strokeWidth={2} dot={{r: 4, fill: isDarkMode ? '#1f2937' : '#fff', stroke: '#3b82f6', strokeWidth: 2}} activeDot={{r: 6}} name="Cuti" />
                 <Line type="monotone" dataKey="sakit" stroke="#ef4444" strokeWidth={2} dot={{r: 4, fill: isDarkMode ? '#1f2937' : '#fff', stroke: '#ef4444', strokeWidth: 2}} activeDot={{r: 6}} name="Sakit" />
-                <Line type="monotone" dataKey="tanpa" stroke="#f59e0b" strokeWidth={2} dot={{r: 4, fill: isDarkMode ? '#1f2937' : '#fff', stroke: '#f59e0b', strokeWidth: 2}} activeDot={{r: 6}} name="Tanpa Keterangan" />
+                <Line type="monotone" dataKey="unpaid" stroke="#f59e0b" strokeWidth={2} dot={{r: 4, fill: isDarkMode ? '#1f2937' : '#fff', stroke: '#f59e0b', strokeWidth: 2}} activeDot={{r: 6}} name="Unpaid Leave" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -257,13 +257,13 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {customerStats.map((cust, idx) => {
                 const totalEmp = employeeCounts[cust.name] || 0;
-                const totalAbsen = cust.cuti + cust.sakit + cust.tanpa;
+                const totalAbsen = cust.cuti + cust.sakit + cust.unpaid;
                 const hadir = Math.max(0, totalEmp - totalAbsen);
                 
                 const pctHadir = totalEmp > 0 ? ((hadir / totalEmp) * 100).toFixed(1) + '%' : '-';
                 const pctCuti = totalEmp > 0 ? ((cust.cuti / totalEmp) * 100).toFixed(1) + '%' : '-';
                 const pctSakit = totalEmp > 0 ? ((cust.sakit / totalEmp) * 100).toFixed(1) + '%' : '-';
-                const pctTanpa = totalEmp > 0 ? ((cust.tanpa / totalEmp) * 100).toFixed(1) + '%' : '-';
+                const pctUnpaid = totalEmp > 0 ? ((cust.unpaid / totalEmp) * 100).toFixed(1) + '%' : '-';
 
                 return (
                   <div key={idx} className={`p-4 rounded-lg shadow-sm border flex flex-col ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
@@ -278,7 +278,7 @@ export default function Dashboard() {
                         <div className="text-emerald-500 bg-emerald-50 rounded py-0.5">Hadir: {pctHadir}</div>
                         <div className="text-blue-500 bg-blue-50 rounded py-0.5">Cuti: {pctCuti}</div>
                         <div className="text-red-500 bg-red-50 rounded py-0.5">Sakit: {pctSakit}</div>
-                        <div className="text-amber-500 bg-amber-50 rounded py-0.5">Alfa: {pctTanpa}</div>
+                        <div className="text-amber-500 bg-amber-50 rounded py-0.5">Unpaid: {pctUnpaid}</div>
                       </div>
                     </div>
                     <div style={{ height: '160px' }}>
@@ -290,7 +290,7 @@ export default function Dashboard() {
                           <Tooltip cursor={{fill: isDarkMode ? '#374151' : '#f3f4f6'}} contentStyle={{backgroundColor: isDarkMode ? '#1f2937' : '#fff', borderColor: isDarkMode ? '#374151' : '#eee', color: isDarkMode ? '#fff' : '#000'}} />
                           <Bar dataKey="cuti" name="Cuti" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={25} />
                           <Bar dataKey="sakit" name="Sakit" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={25} />
-                          <Bar dataKey="tanpa" name="Tanpa Ket." fill="#f59e0b" radius={[4, 4, 0, 0]} barSize={25} />
+                          <Bar dataKey="unpaid" name="Unpaid Leave" fill="#f59e0b" radius={[4, 4, 0, 0]} barSize={25} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
