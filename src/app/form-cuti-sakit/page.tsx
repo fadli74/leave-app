@@ -89,15 +89,20 @@ export default function LeaveForm() {
       .catch(err => console.error("Gagal mengambil Data Master:", err));
   }, []);
 
-  // Update filteredEmployees if employees loads AFTER user has typed
+  // Update filteredEmployees when branch or name changes
   useEffect(() => {
-    if (formData.nama.length > 0) {
-      const filtered = employees.filter(emp => 
-        (emp['Employee Name'] || '').toString().toLowerCase().includes(formData.nama.toLowerCase())
+    if (formData.cabang) {
+      let branchFiltered = employees.filter(emp => 
+        (emp['CABANG'] || '') === formData.cabang
       );
-      setFilteredEmployees(filtered);
+      if (formData.nama.length > 0) {
+        branchFiltered = branchFiltered.filter(emp => 
+          (emp['Employee Name'] || '').toString().toLowerCase().includes(formData.nama.toLowerCase())
+        );
+      }
+      setFilteredEmployees(branchFiltered);
     }
-  }, [employees, formData.nama]);
+  }, [employees, formData.nama, formData.cabang]);
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -144,19 +149,25 @@ export default function LeaveForm() {
       nama: selectedName,
       empId: '', // Reset
       job: '',
-      cabang: '',
       namaAtasan: '',
       customer: ''
     }));
 
+    // Filter by selected branch first, then by typed name
+    let branchFiltered = employees.filter(emp => 
+      (emp['CABANG'] || '') === formData.cabang
+    );
+
     if (selectedName.length > 0) {
-      const filtered = employees.filter(emp => 
+      const filtered = branchFiltered.filter(emp => 
         (emp['Employee Name'] || '').toString().toLowerCase().includes(selectedName.toLowerCase())
       );
       setFilteredEmployees(filtered);
       setShowSuggestions(true);
     } else {
-      setShowSuggestions(false);
+      // Show all employees from selected branch when input is empty
+      setFilteredEmployees(branchFiltered);
+      setShowSuggestions(true);
     }
   };
 
@@ -275,12 +286,41 @@ export default function LeaveForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="cabang" className={labelClass}>
+              Cabang Ditempatkan
+              {isLoadingNames && (
+                <span className="text-blue-500 text-xs ml-2">(Menyiapkan data...)</span>
+              )}
+            </label>
+            <select
+              name="cabang"
+              id="cabang"
+              required
+              value={formData.cabang}
+              onChange={(e) => {
+                setFormData(prev => ({
+                  ...prev,
+                  cabang: e.target.value,
+                  nama: '',
+                  empId: '',
+                  job: '',
+                  namaAtasan: '',
+                  customer: ''
+                }));
+                setShowSuggestions(false);
+              }}
+              className={inputClass}
+            >
+              <option value="">Pilih Cabang...</option>
+              {Array.from(new Set(employees.map(emp => emp['CABANG']).filter(Boolean))).sort().map((cab) => (
+                <option key={cab} value={cab}>{cab}</option>
+              ))}
+            </select>
+          </div>
           <div className="relative">
             <label htmlFor="nama" className={labelClass}>
-              Nama Karyawan 
-              {isLoadingNames && (
-                <span className="text-blue-500 text-xs ml-2">(Menyiapkan auto-fill...)</span>
-              )}
+              Nama Karyawan
               {!isLoadingNames && employees.length === 0 && (
                 <span className="text-red-500 text-xs ml-2">(Gagal memuat data)</span>
               )}
@@ -294,9 +334,10 @@ export default function LeaveForm() {
                 required 
                 value={formData.nama} 
                 onChange={handleNameChange}
-                onClick={(e) => { e.stopPropagation(); if (formData.nama.length > 0) setShowSuggestions(true); }}
+                onClick={(e) => { e.stopPropagation(); if (formData.nama.length > 0 || formData.cabang) setShowSuggestions(true); }}
                 className={inputClass} 
-                placeholder="Ketik nama karyawan..."
+                placeholder={formData.cabang ? "Ketik atau pilih nama karyawan..." : "Pilih cabang terlebih dahulu..."}
+                disabled={!formData.cabang}
               />
               {/* Custom Autocomplete Dropdown */}
               {showSuggestions && filteredEmployees.length > 0 && (
@@ -311,23 +352,19 @@ export default function LeaveForm() {
                         isDarkMode ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
                       }`}
                     >
-                      {emp['Employee Name']} <span className="text-xs opacity-50 ml-1">- {emp['CABANG']}</span>
+                      {emp['Employee Name']} <span className="text-xs opacity-50 ml-1">- {emp['Jabatan'] || ''}</span>
                     </li>
                   ))}
                 </ul>
               )}
             </div>
           </div>
-          <div>
-            <label htmlFor="empId" className={labelClass}>Employee Id</label>
-            <input type="text" name="empId" id="empId" readOnly required value={formData.empId} className={`${inputClass} bg-gray-50 text-gray-500 cursor-not-allowed`} placeholder="Terisi otomatis..." />
-          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="cabang" className={labelClass}>Cabang Ditempatkan</label>
-            <input type="text" name="cabang" id="cabang" readOnly required value={formData.cabang} className={`${inputClass} bg-gray-50 text-gray-500 cursor-not-allowed`} placeholder="Terisi otomatis..." />
+            <label htmlFor="empId" className={labelClass}>Employee Id</label>
+            <input type="text" name="empId" id="empId" readOnly required value={formData.empId} className={`${inputClass} bg-gray-50 text-gray-500 cursor-not-allowed`} placeholder="Terisi otomatis..." />
           </div>
           <div>
             <label htmlFor="job" className={labelClass}>Job (Posisi/Jabatan)</label>
