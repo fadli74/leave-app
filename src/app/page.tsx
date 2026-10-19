@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [chartData, setChartData] = React.useState<any[]>([]);
   const [customerStats, setCustomerStats] = React.useState<any[]>([]);
   const [employeeCounts, setEmployeeCounts] = React.useState<Record<string, number>>({});
+  const [cabangStats, setCabangStats] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     // 1. Tampilkan dari cache
@@ -106,6 +107,7 @@ export default function Dashboard() {
     
     const groupedByDate: Record<string, any> = {};
     const groupedByCustomer: Record<string, any> = {};
+    const groupedByCabang: Record<string, any> = {};
 
     // Inisialisasi 7 hari terakhir agar grafik tidak kosong
     for (let i = 6; i >= 0; i--) {
@@ -151,6 +153,17 @@ export default function Dashboard() {
           else if (jenis.includes('cuti')) groupedByCustomer[customer].cuti++;
           else if (jenis.includes('sakit')) groupedByCustomer[customer].sakit++;
       }
+
+      // Group by Cabang Ditempatkan
+      let cabang = String(row['Cabang Ditempatkan'] || '').trim();
+      if (cabang) {
+          if (!groupedByCabang[cabang]) {
+             groupedByCabang[cabang] = { name: cabang, cuti: 0, sakit: 0, unpaid: 0 };
+          }
+          if (jenis.includes('unpaid leave')) groupedByCabang[cabang].unpaid++;
+          else if (jenis.includes('cuti')) groupedByCabang[cabang].cuti++;
+          else if (jenis.includes('sakit')) groupedByCabang[cabang].sakit++;
+      }
     });
     
     setTotalUnpaidLeave(unpaidLeave);
@@ -162,6 +175,9 @@ export default function Dashboard() {
     
     const newCustomerData = Object.values(groupedByCustomer).sort((a: any, b: any) => (b.cuti + b.sakit + b.unpaid) - (a.cuti + a.sakit + a.unpaid));
     setCustomerStats(newCustomerData);
+
+    const newCabangData = Object.values(groupedByCabang).sort((a: any, b: any) => (b.cuti + b.sakit + b.unpaid) - (a.cuti + a.sakit + a.unpaid));
+    setCabangStats(newCabangData);
   }, [rawFormData, startDate, endDate, searchQuery]);
 
   if (userRole === 'umum') {
@@ -284,6 +300,51 @@ export default function Dashboard() {
                     <div style={{ height: '160px' }}>
                       <ResponsiveContainer width="100%" height="100%" minHeight={160}>
                         <BarChart data={[cust]} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#374151' : '#eee'} />
+                          <XAxis dataKey="name" hide />
+                          <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{fontSize: 12, fill: isDarkMode ? '#9ca3af' : '#888'}} />
+                          <Tooltip cursor={{fill: isDarkMode ? '#374151' : '#f3f4f6'}} contentStyle={{backgroundColor: isDarkMode ? '#1f2937' : '#fff', borderColor: isDarkMode ? '#374151' : '#eee', color: isDarkMode ? '#fff' : '#000'}} />
+                          <Bar dataKey="cuti" name="Cuti" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={25} />
+                          <Bar dataKey="sakit" name="Sakit" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={25} />
+                          <Bar dataKey="unpaid" name="Unpaid Leave" fill="#f59e0b" radius={[4, 4, 0, 0]} barSize={25} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                );
+            })}
+          </div>
+      )}
+
+      {/* Cabang Stats Cards */}
+      <h3 className={`text-sm font-bold mb-4 mt-6 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Statistik Per Cabang</h3>
+      {cabangStats.length === 0 ? (
+          <div className={`p-8 text-center text-sm rounded-lg border ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-white text-gray-500'}`}>
+              Belum ada data cabang
+          </div>
+      ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {cabangStats.map((cab, idx) => {
+                const totalAbsen = cab.cuti + cab.sakit + cab.unpaid;
+
+                return (
+                  <div key={idx} className={`p-4 rounded-lg shadow-sm border flex flex-col ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+                    <div className={`mb-3 pb-2 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{cab.name}</h4>
+                        <span className={`text-sm px-3 py-1 rounded-full font-bold ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
+                          Total: {totalAbsen}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-1 text-[11px] font-bold text-center mt-1">
+                        <div className="text-blue-500 bg-blue-50 rounded py-0.5">Cuti: {cab.cuti}</div>
+                        <div className="text-red-500 bg-red-50 rounded py-0.5">Sakit: {cab.sakit}</div>
+                        <div className="text-amber-500 bg-amber-50 rounded py-0.5">Unpaid: {cab.unpaid}</div>
+                      </div>
+                    </div>
+                    <div style={{ height: '160px' }}>
+                      <ResponsiveContainer width="100%" height="100%" minHeight={160}>
+                        <BarChart data={[cab]} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#374151' : '#eee'} />
                           <XAxis dataKey="name" hide />
                           <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{fontSize: 12, fill: isDarkMode ? '#9ca3af' : '#888'}} />
