@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '@/components/MainLayout';
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbzCEjO2z3tnGwRtY4-zxLjrn-YEUh5pq7BKaDGOcJvPH3l8HxRaPdnU7uf0pm1giW0/exec';
@@ -16,6 +16,7 @@ export default function LeaveForm() {
   const [isLoadingNames, setIsLoadingNames] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState<any[]>([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // State untuk Data Master (Atasan, Jenis Cuti)
   const [masterData, setMasterData] = useState({
@@ -186,9 +187,13 @@ export default function LeaveForm() {
 
   // Tutup dropdown jika klik di luar
   useEffect(() => {
-    const handleClickOutside = () => setShowSuggestions(false);
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -318,7 +323,7 @@ export default function LeaveForm() {
               ))}
             </select>
           </div>
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <label htmlFor="nama" className={labelClass}>
               Nama Karyawan
               {!isLoadingNames && employees.length === 0 && (
@@ -334,7 +339,8 @@ export default function LeaveForm() {
                 required 
                 value={formData.nama} 
                 onChange={handleNameChange}
-                onClick={(e) => { e.stopPropagation(); if (formData.nama.length > 0 || formData.cabang) setShowSuggestions(true); }}
+                onFocus={() => { if (formData.cabang) setShowSuggestions(true); }}
+                onClick={() => { if (formData.cabang) setShowSuggestions(true); }}
                 className={inputClass} 
                 placeholder={formData.cabang ? "Ketik atau pilih nama karyawan..." : "Pilih cabang terlebih dahulu..."}
                 disabled={!formData.cabang}

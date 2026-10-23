@@ -1,6 +1,6 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Search, Copy, Check, User, Building2, BadgeCheck, Briefcase, CreditCard, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ShieldCheck, Search, Copy, Check, User, Building2, BadgeCheck, Briefcase, CreditCard, AlertCircle, ChevronDown, X } from 'lucide-react';
 import { useAppContext } from '@/components/MainLayout';
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbzCEjO2z3tnGwRtY4-zxLjrn-YEUh5pq7BKaDGOcJvPH3l8HxRaPdnU7uf0pm1giW0/exec';
@@ -16,12 +16,17 @@ export default function CekBpjsPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
   const [copied, setCopied] = useState(false);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const cached = localStorage.getItem('bpjsKaryawanCache');
     if (cached) {
       try {
-        setEmployees(JSON.parse(cached));
-        setIsLoading(false);
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setEmployees(parsed);
+          setIsLoading(false);
+        }
       } catch (e) {
         localStorage.removeItem('bpjsKaryawanCache');
       }
@@ -43,26 +48,34 @@ export default function CekBpjsPage() {
       });
   }, []);
 
-  // Close suggestions when clicking outside
+  // Close suggestions when clicking outside dropdownRef
   useEffect(() => {
-    const handleClickOutside = () => setShowSuggestions(false);
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const uniqueCabangs = Array.from(
     new Set(employees.map(emp => emp['CABANG']).filter(Boolean))
   ).sort();
 
-  const filteredEmployees = employees.filter(emp => {
-    const matchCabang = !selectedCabang || emp['CABANG'] === selectedCabang;
-    const q = searchName.toLowerCase().trim();
-    const matchName =
-      !q ||
-      String(emp['Employee Name'] || '').toLowerCase().includes(q) ||
-      String(emp['Employee Id'] || '').toLowerCase().includes(q);
-    return matchCabang && matchName;
-  });
+  const filteredEmployees = employees
+    .filter(emp => {
+      const matchCabang = !selectedCabang || emp['CABANG'] === selectedCabang;
+      const q = searchName.toLowerCase().trim();
+      const matchName =
+        !q ||
+        String(emp['Employee Name'] || '').toLowerCase().includes(q) ||
+        String(emp['Employee Id'] || '').toLowerCase().includes(q);
+      return matchCabang && matchName;
+    })
+    .sort((a, b) =>
+      String(a['Employee Name'] || '').localeCompare(String(b['Employee Name'] || ''))
+    );
 
   const handleSelectEmployee = (emp: any) => {
     setSelectedEmployee(emp);
@@ -118,7 +131,7 @@ export default function CekBpjsPage() {
                 isDarkMode ? 'text-gray-400' : 'text-gray-500'
               }`}
             >
-              Pilih cabang dan nama karyawan untuk melihat nomor kepesertaan BPJS PU.
+              Pilih cabang dan klik nama karyawan untuk melihat nomor kepesertaan BPJS PU.
             </p>
           </div>
         </div>
@@ -139,7 +152,7 @@ export default function CekBpjsPage() {
                 setSelectedCabang(e.target.value);
                 setSearchName('');
                 setSelectedEmployee(null);
-                setShowSuggestions(false);
+                setShowSuggestions(true);
               }}
               className={inputClass}
             >
@@ -153,7 +166,7 @@ export default function CekBpjsPage() {
           </div>
 
           {/* Pilih / Cari Nama Karyawan */}
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <label htmlFor="namaKaryawan" className={labelClass}>
               Nama Karyawan / Employee ID
             </label>
@@ -163,61 +176,91 @@ export default function CekBpjsPage() {
                 id="namaKaryawan"
                 autoComplete="off"
                 value={searchName}
+                onFocus={() => setShowSuggestions(true)}
+                onClick={() => setShowSuggestions(true)}
                 onChange={e => {
                   setSearchName(e.target.value);
                   setSelectedEmployee(null);
                   setShowSuggestions(true);
                 }}
-                onClick={e => {
-                  e.stopPropagation();
-                  setShowSuggestions(true);
-                }}
-                placeholder="Ketik atau pilih nama karyawan..."
-                className={`${inputClass} pr-9`}
+                placeholder="Klik untuk pilih atau ketik nama..."
+                className={`${inputClass} pr-16 cursor-pointer`}
               />
-              <Search
-                size={16}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-              />
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                {searchName && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchName('');
+                      setSelectedEmployee(null);
+                      setShowSuggestions(true);
+                    }}
+                    className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                    title="Hapus pencarian"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setShowSuggestions(prev => !prev)}
+                  className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                  tabIndex={-1}
+                >
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 ${
+                      showSuggestions ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+              </div>
 
-              {showSuggestions && filteredEmployees.length > 0 && (
+              {showSuggestions && (
                 <ul
-                  className={`absolute z-20 w-full mt-1 max-h-60 overflow-auto rounded-lg shadow-lg border ${
+                  className={`absolute z-30 w-full mt-1 max-h-64 overflow-y-auto rounded-lg shadow-xl border ${
                     isDarkMode
                       ? 'bg-gray-800 border-gray-700'
                       : 'bg-white border-gray-200'
                   }`}
                 >
-                  {filteredEmployees.map((emp, idx) => (
-                    <li
-                      key={idx}
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleSelectEmployee(emp);
-                      }}
-                      className={`cursor-pointer px-4 py-2.5 text-sm flex items-center justify-between border-b last:border-b-0 ${
-                        isDarkMode
-                          ? 'text-gray-200 hover:bg-gray-700 border-gray-700/60'
-                          : 'text-gray-700 hover:bg-emerald-50/60 border-gray-100'
-                      }`}
-                    >
-                      <div>
-                        <div className="font-semibold">{emp['Employee Name']}</div>
-                        <div className="text-xs opacity-60">
-                          {emp['Employee Id']} • {emp['CABANG']}
-                        </div>
-                      </div>
-                      <span
-                        className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
-                          emp['BPJS PU']
-                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                            : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                  {isLoading ? (
+                    <li className="px-4 py-3 text-sm text-gray-400 text-center">
+                      Memuat daftar karyawan...
+                    </li>
+                  ) : filteredEmployees.length > 0 ? (
+                    filteredEmployees.map((emp, idx) => (
+                      <li
+                        key={idx}
+                        onClick={() => handleSelectEmployee(emp)}
+                        className={`cursor-pointer px-4 py-2.5 text-sm flex items-center justify-between border-b last:border-b-0 ${
+                          isDarkMode
+                            ? 'text-gray-200 hover:bg-gray-700 border-gray-700/60'
+                            : 'text-gray-700 hover:bg-emerald-50/70 border-gray-100'
                         }`}
                       >
-                        {emp['BPJS PU'] ? 'Ada BPJS' : 'Kosong'}
-                      </span>
+                        <div>
+                          <div className="font-semibold">{emp['Employee Name']}</div>
+                          <div className="text-xs opacity-60">
+                            {emp['Employee Id']} • {emp['CABANG']}
+                          </div>
+                        </div>
+                        <span
+                          className={`text-[11px] px-2 py-0.5 rounded-full font-medium shrink-0 ml-2 ${
+                            emp['BPJS PU']
+                              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                              : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                          }`}
+                        >
+                          {emp['BPJS PU'] ? 'Ada BPJS' : 'Kosong'}
+                        </span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-4 py-3 text-sm text-gray-400 text-center">
+                      Nama karyawan tidak ditemukan
                     </li>
-                  ))}
+                  )}
                 </ul>
               )}
             </div>
@@ -480,7 +523,7 @@ export default function CekBpjsPage() {
             className="mx-auto mb-3 text-emerald-600/40 dark:text-emerald-400/30"
           />
           <p className="font-medium text-sm">
-            Silakan pilih cabang dan ketik nama karyawan di atas untuk menampilkan kartu BPJS.
+            Silakan pilih cabang dan klik nama karyawan di atas untuk menampilkan kartu BPJS.
           </p>
         </div>
       )}
